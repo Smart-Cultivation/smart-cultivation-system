@@ -2,7 +2,6 @@ from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
 import click
 from flask.cli import with_appcontext
-
 from sqlalchemy.exc import (
     IntegrityError,
     OperationalError,
@@ -14,18 +13,15 @@ from sqlalchemy.exc import (
 
 db = SQLAlchemy()
 
-
 def init_db(app):
     db.init_app(app)
     with app.app_context():
         db.create_all()
 
-
 def drop_db(app):
     with app.app_context():
         db.reflect()
         db.drop_all()
-
 
 def format_database_error(exception):
     if isinstance(exception, IntegrityError):
@@ -43,13 +39,11 @@ def format_database_error(exception):
     else:
         return f"Unknown database error: {exception}"
 
-
 @click.command("init-db")
 @with_appcontext
 def init_db_command():
     init_db(current_app)
     click.echo("Initialized the database.")
-
 
 @click.command("drop-db")
 @with_appcontext
