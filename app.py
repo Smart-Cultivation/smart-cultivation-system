@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from socket_io import socketio
 from config import CONFIG
+from flask_bootstrap import Bootstrap
 
 from index import bp as index_bp
 from errors import bp as error_bp
