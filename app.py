@@ -2,7 +2,6 @@ import os
 from flask import Flask
 from socket_io import socketio
 from config import CONFIG
-from flask_bootstrap import Bootstrap
 
 from index import bp as index_bp
 from errors import bp as error_bp
@@ -18,7 +17,6 @@ from database.mysql import init_db, init_db_command, drop_db_command
 
 app = Flask(__name__)
 app.config.update(CONFIG)
-Bootstrap(app)
 
 # Register Blueprint
 app.register_blueprint(index_bp)
@@ -38,6 +36,4 @@ app.cli.add_command(init_db_command)
 app.cli.add_command(drop_db_command)
 
 if __name__ == "__main__":
-    socketio.run(
-        app, debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080))
-    )
+    app.run(host='0.0.0.0', port=5000, debug=True)
