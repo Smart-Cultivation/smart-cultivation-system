@@ -1,6 +1,5 @@
-from flask import Flask, current_app
+from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 import click
 from flask.cli import with_appcontext
 from sqlalchemy.exc import (
@@ -13,11 +12,16 @@ from sqlalchemy.exc import (
 )
 
 db = SQLAlchemy()
-migrate = Migrate()
 
 def init_db(app):
     db.init_app(app)
-    migrate.init_app(app, db)
+    with app.app_context():
+        db.create_all()
+
+def drop_db(app):
+    with app.app_context():
+        db.reflect()
+        db.drop_all()
 
 def format_database_error(exception):
     if isinstance(exception, IntegrityError):
@@ -39,13 +43,10 @@ def format_database_error(exception):
 @with_appcontext
 def init_db_command():
     init_db(current_app)
-    with current_app.app_context():
-        db.create_all()
     click.echo("Initialized the database.")
 
 @click.command("drop-db")
 @with_appcontext
 def drop_db_command():
-    with current_app.app_context():
-        db.drop_all()
+    drop_db(current_app)
     click.echo("Dropped the database.")
