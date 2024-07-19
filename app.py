@@ -29,7 +29,7 @@ app.register_blueprint(db_bp)
 init_cache_app(app)
 init_compress_app(app)
 init_rate_limiter(app)
-init_db(app)
+# init_db(app)
 
 # CLI Command
 app.cli.add_command(init_db_command)
