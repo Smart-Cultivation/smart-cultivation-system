@@ -15,13 +15,11 @@ db = SQLAlchemy()
 
 def init_db(app):
     db.init_app(app)
-    with app.app_context():
-        db.create_all()
+    db.create_all()
 
 def drop_db(app):
-    with app.app_context():
-        db.reflect()
-        db.drop_all()
+    db.reflect()
+    db.drop_all()
 
 def format_database_error(exception):
     if isinstance(exception, IntegrityError):
