@@ -17,6 +17,7 @@ from database.mysql import init_db, init_db_command, drop_db_command
 
 app = Flask(__name__)
 app.config.update(CONFIG)
+Bootstrap(app)
 
 # Register Blueprint
 app.register_blueprint(index_bp)
