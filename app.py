@@ -14,6 +14,7 @@ from compress import init_compress_app
 from rate_limiter import init_rate_limiter
 from database.mysql import init_db, init_db_command, drop_db_command
 
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config.update(CONFIG)
@@ -29,11 +30,14 @@ app.register_blueprint(db_bp)
 init_cache_app(app)
 init_compress_app(app)
 init_rate_limiter(app)
-init_db(app)
+#init_db(app)
+db = SQLAlchemy(app)
+
+db.create_all()
 
 # CLI Command
-app.cli.add_command(init_db_command)
-app.cli.add_command(drop_db_command)
+# app.cli.add_command(init_db_command)
+# app.cli.add_command(drop_db_command)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
