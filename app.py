@@ -19,6 +19,9 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 app.config.update(CONFIG)
 
+# Initialize SQLAlchemy with the app
+db = SQLAlchemy(app)
+
 # Register Blueprint
 app.register_blueprint(index_bp)
 app.register_blueprint(error_bp)
@@ -33,7 +36,9 @@ init_rate_limiter(app)
 #init_db(app)
 db = SQLAlchemy(app)
 
-db.create_all()
+# Create all database tables
+with app.app_context():
+    db.create_all()
 
 # CLI Command
 # app.cli.add_command(init_db_command)
