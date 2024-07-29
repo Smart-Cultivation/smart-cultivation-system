@@ -17,9 +17,10 @@
                     </div>
                     <ul>
                         {% for tracker in trackers %}
-                        <a href="/smart_cultivation_system/{{tracker.id}}">Tracker Active: {{ tracker.id }} - {{
-                            tracker.name }}</a>
-                        <br>
+                        <li>
+                            <a href="/smart_cultivation_system/{{tracker.id}}">Tracker Active: {{ tracker.id }} - {{
+                                tracker.name }}</a>
+                        </li>
                         {% endfor %}
                     </ul>
                 </div>
