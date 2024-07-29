@@ -42,4 +42,5 @@ Werkzeug==3.0.1
 wrapt==1.16.0
 wsproto==1.2.0
 WTForms==3.1.2
+xgboost==2.1.0
 zipp==3.17.0
