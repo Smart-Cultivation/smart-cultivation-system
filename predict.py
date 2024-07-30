@@ -31,6 +31,9 @@ def get_water_quality_category(fish_health_condition_factor):
     elif 1.2 <= fish_health_condition_factor < 1.4:
         return 'good'
     else:
+        print(fish_health_condition_factor)
+        print(fish_health_condition_factor < 0.8)
+        print(type(fish_health_condition_factor))
         return 'excellent'
 
 @bp.route('/', methods=['GET', 'POST'])
