@@ -1,0 +1,29 @@
+{% extends "components/master_layout.html" %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="height: 80vh;">
+    <form method="POST" action="/pond/insert" class="card p-5 d-flex flex-column gap-3">
+        <h1 class="text-center">Insert Fish Pond</h1>
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.pond_name.label(class="form-control-label mb-2") }}
+            {{ form.pond_name(class="form-control", placeholder="Enter pond name") }}
+        </div>
+        <div class="form-group">
+            {{ form.location.label(class="form-control-label mb-2") }}
+            {{ form.location(class="form-control", placeholder="Enter pond location") }}
+        </div>
+        <p>
+            {% for error in form.pond_name.errors %}
+                <span style="color: red;">[{{ error }}]</span><br>
+            {% endfor %}
+        </p>
+        <p>
+            {% for error in form.location.errors %}
+                <span style="color: red;">[{{ error }}]</span><br>
+            {% endfor %}
+        </p>
+        {{ form.submit(class="btn btn-dark") }}
+    </form>
+</div>
+{% endblock %}

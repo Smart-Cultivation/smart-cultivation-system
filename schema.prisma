@@ -1,33 +1,53 @@
-datasource db {
-  provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL")
-  directUrl = env("POSTGRES_URL_NON_POOLING")
-}
-
 generator client {
   provider = "prisma-client-js"
 }
 
-model Tracker {
-  id             Int      @id @default(autoincrement())
-  name           String
-  description    String?
-  asset_img_url  String?
-  tracker_img_url String?
-
-  locations      Location[]
-
-  @@map("tracker") // Optional: Maps this model to an existing table named "tracker" in the database
+datasource db {
+  provider = "postgresql" // or "mysql", "sqlite", etc.
+  url      = env("DATABASE_URL")
 }
 
-model Location {
-  id          Int      @id @default(autoincrement())
-  tracker_id  Int
-  lat         Float
-  lon         Float
-  timestamp   DateTime
+model Pond {
+  pond_id       Int          @id @default(autoincrement())
+  pond_name     String
+  location      String?
+  creation_date DateTime      @default(now())
+  waterQualities WaterQuality[]
+  fishData       FishData[]
+  metrics        FishPondMetrics[]
+}
 
-  tracker     Tracker  @relation(fields: [tracker_id], references: [id])
+model WaterQuality {
+  water_quality_id Int      @id @default(autoincrement())
+  pond_id          Int
+  date             DateTime @default(now())
+  pH               Float
+  turbidity        Float
+  temperature      Float
+  nitrate          Float
 
-  @@map("location") // Optional: Maps this model to an existing table named "location" in the database
+  pond Pond @relation(fields: [pond_id], references: [pond_id])
+}
+
+model FishData {
+  fish_data_id    Int      @id @default(autoincrement())
+  pond_id         Int
+  date            DateTime @default(now())
+  fish_weight     Float
+  fish_height     Float
+  fish_population Int
+
+  pond Pond @relation(fields: [pond_id], references: [pond_id])
+}
+
+model FishPondMetrics {
+  metric_id           Int      @id @default(autoincrement())
+  pond_id             Int
+  date                DateTime @default(now())
+  total_fish_weight   Float
+  average_fish_weight Float
+  average_fish_height Float
+  total_population    Int
+
+  pond Pond @relation(fields: [pond_id], references: [pond_id])
 }

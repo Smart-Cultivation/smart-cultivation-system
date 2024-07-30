@@ -6,7 +6,7 @@ from index import bp as index_bp
 from errors import bp as error_bp
 from smart_cultivation_system import bp as llt_bp
 from receive_data import bp as rd_bp
-from insert_tracker import bp as db_bp
+from insert_pond import bp as db_bp
 from predict import bp as predict_bp
 
 from cache import init_cache_app

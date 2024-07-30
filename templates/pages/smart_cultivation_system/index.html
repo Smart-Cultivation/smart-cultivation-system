@@ -10,16 +10,16 @@
                     <div class="d-flex justify-content-between">
                         <h1>Fish Ponds</h1>
                         <div>
-                            <a href="/tracker/insert" class="btn btn-primary">
+                            <a href="/pond/insert" class="btn btn-primary">
                                 Insert New Fish Pond
                             </a>
                         </div>
                     </div>
                     <ul>
-                        {% for tracker in trackers %}
+                        {% for pond in ponds %}
                         <li>
-                            <a href="/smart_cultivation_system/{{tracker.id}}">Tracker Active: {{ tracker.id }} - {{
-                                tracker.name }}</a>
+                            <a href="/smart_cultivation_system/{{ pond.pond_id }}">Fish Pond: {{ pond.pond_id }} - {{
+                                pond.pond_name }}</a>
                         </li>
                         {% endfor %}
                     </ul>

@@ -1,29 +1,39 @@
 from flask import Blueprint, render_template
 from cache import cache
-from database.model.tracker import Tracker
-from database.model.location import Location
+from database.model.pond import Pond, WaterQuality, FishData, FishPondMetrics
 
 bp = Blueprint("smart_cultivation_system", __name__,
                url_prefix="/smart_cultivation_system")
 
-
 @bp.route("/")
-@cache.cached(timeout=15)
 def smart_cultivation_system():
-    trackers = Tracker.query.all()
-    return render_template("pages/smart_cultivation_system/index.html", trackers=trackers)
+    ponds = Pond.query.all()
+    return render_template("pages/smart_cultivation_system/index.html", ponds=ponds)
 
+@bp.route("/<int:pond_id>")
+def smart_cultivation_system_pond(pond_id):
+    pond = Pond.query.filter_by(pond_id=pond_id).first()
 
-@bp.route("/<int:tracker_id>")
-@cache.cached(timeout=15)
-def smart_cultivation_system_tracker(tracker_id):
-    # trackers = Tracker.query.all()
-    tracker = Tracker.query.filter_by(id=tracker_id).first()
+    waterQualities = WaterQuality.query.filter_by(pond_id=pond_id).all()
+    fishData = FishData.query.filter_by(pond_id=pond_id).all()
+    metrics = FishPondMetrics.query.filter_by(pond_id=pond_id).all()
 
-    data = Location.query.filter(Location.tracker_id == tracker_id).all()
-    locations = [location.to_dict() for location in data]
     return render_template(
-        "pages/smart_cultivation_system/trackers.html",
-        locations=locations,
-        tracker=tracker,
+        "pages/smart_cultivation_system/ponds.html",
+        pond=pond,
+        waterQualities=waterQualities,
+        fishData=fishData,
+        metrics=metrics,
     )
+
+def get_pond_by_id(pond_id):
+    return Pond.query.filter_by(pond_id=pond_id).first()
+
+def get_water_quality_by_pond_id(pond_id):
+    return WaterQuality.query.filter_by(pond_id=pond_id).all()
+
+def get_fish_data_by_pond_id(pond_id):
+    return FishData.query.filter_by(pond_id=pond_id).all()
+
+def get_metrics_by_pond_id(pond_id):
+    return FishPondMetrics.query.filter_by(pond_id=pond_id).all()
