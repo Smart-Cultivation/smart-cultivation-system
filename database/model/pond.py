@@ -1,5 +1,6 @@
 from datetime import datetime
 from database.mysql import db
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class Pond(db.Model):
     __tablename__ = 'ponds'
@@ -8,13 +9,15 @@ class Pond(db.Model):
     pond_name = db.Column(db.String(255), nullable=False)
     location = db.Column(db.String(255), nullable=True)
     creation_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    owner_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     
     water_qualities = db.relationship("WaterQuality", backref="pond", lazy=True)
     fish_data = db.relationship("FishData", backref="pond", lazy=True)
     metrics = db.relationship("FishPondMetrics", backref="pond", lazy=True)
 
-    def __init__(self, pond_name, location=None):
+    def __init__(self, pond_name, owner_id, location=None):
         self.pond_name = pond_name
+        self.owner_id = owner_id
         self.location = location
 
     def to_dict(self):
@@ -22,7 +25,8 @@ class Pond(db.Model):
             "pond_id": self.pond_id,
             "pond_name": self.pond_name,
             "location": self.location,
-            "creation_date": self.creation_date.strftime("%Y-%m-%d %H:%M:%S")
+            "creation_date": self.creation_date.strftime("%Y-%m-%d %H:%M:%S"),
+            "owner_id": self.owner_id
         }
 
 class WaterQuality(db.Model):
@@ -42,8 +46,7 @@ class WaterQuality(db.Model):
         self.turbidity = turbidity
         self.temperature = temperature
         self.nitrate = nitrate
-        if date:
-            self.date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+        self.date = date if date else datetime.utcnow()
 
     def to_dict(self):
         return {
@@ -71,8 +74,7 @@ class FishData(db.Model):
         self.fish_weight = fish_weight
         self.fish_height = fish_height
         self.fish_population = fish_population
-        if date:
-            self.date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+        self.date = date if date else datetime.utcnow()
 
     def to_dict(self):
         return {
@@ -101,8 +103,7 @@ class FishPondMetrics(db.Model):
         self.average_fish_weight = average_fish_weight
         self.average_fish_height = average_fish_height
         self.total_population = total_population
-        if date:
-            self.date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+        self.date = date if date else datetime.utcnow()
 
     def to_dict(self):
         return {

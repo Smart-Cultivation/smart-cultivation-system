@@ -16,7 +16,19 @@
                         <li>
                             <p>{{ pond.location }}</p>
                         </li>
-                        <!-- You can include images or other relevant details if available -->
+                        <li>
+                            <strong>Owner:</strong> {{ owner.username }}
+                        </li>
+                        <li>
+                            <strong>Employees:</strong>
+                            <ul>
+                                {% for employee in employees %}
+                                <li>
+                                    {{ employee.employee_name }} (ID: {{ employee.employee_id }})
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -32,28 +44,25 @@
                     <h3>Creation Date: {{ pond.creation_date }}</h3>
 
                     <h2>Water Quality</h2>
-                    <table id="waterQualityTable" class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>pH</th>
-                                <th>Turbidity</th>
-                                <th>Temperature</th>
-                                <th>Nitrate</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for waterQuality in waterQualities %}
-                            <tr>
-                                <td>{{ waterQuality.date }}</td>
-                                <td>{{ waterQuality.pH }}</td>
-                                <td>{{ waterQuality.turbidity }}</td>
-                                <td>{{ waterQuality.temperature }}</td>
-                                <td>{{ waterQuality.nitrate }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                    <div id="waterQualityCharts" class="mb-4">
+                        <!-- Plotly charts will be inserted here -->
+                        <div class="row">
+                            <div class="col-4">
+                                <div id="phChart"></div>
+                            </div>
+                            <div class="col-4">
+                                <div id="turbidityChart"></div>
+                            </div>
+                            <div class="col-4">
+                                <div id="temperatureChart"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2>Water Quality History</h2>
+                    <div id="waterQualityHistoryChart" class="mb-4">
+                        <!-- Plotly line chart will be inserted here -->
+                    </div>
 
                     <h2>Fish Data</h2>
                     <table id="fishDataTable" class="table table-striped">
@@ -110,13 +119,9 @@
 {% block script %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
     $(document).ready(function () {
-        $('#waterQualityTable').DataTable({
-            "order": [[0, 'desc']],
-            "responsive": true
-        });
-
         $('#fishDataTable').DataTable({
             "order": [[0, 'desc']],
             "responsive": true
@@ -126,6 +131,79 @@
             "order": [[0, 'desc']],
             "responsive": true
         });
+
+        // Plotly graph data
+        var latestWaterQualities = {{ latestWaterQualities|safe }};
+        var historicalWaterQualities = {{ historicalWaterQualities|safe }};
+
+        // Create circular charts for latest pH, Turbidity, and Temperature
+        var phChart = {
+            type: 'indicator',
+            mode: 'gauge+number',
+            value: latestWaterQualities.pH,
+            title: { text: "Latest pH" },
+            gauge: {
+                axis: { range: [0, 14] }
+            }
+        };
+
+        var turbidityChart = {
+            type: 'indicator',
+            mode: 'gauge+number',
+            value: latestWaterQualities.turbidity,
+            title: { text: "Latest Turbidity" },
+            gauge: {
+                axis: { range: [0, 100] }
+            }
+        };
+
+        var temperatureChart = {
+            type: 'indicator',
+            mode: 'gauge+number',
+            value: latestWaterQualities.temperature,
+            title: { text: "Latest Temperature" },
+            gauge: {
+                axis: { range: [0, 40] }
+            }
+        };
+
+        // Debug output
+        console.log('Latest Water Qualities:', latestWaterQualities);
+        console.log('Historical Water Qualities:', historicalWaterQualities);
+
+        Plotly.newPlot('phChart', [phChart]);
+        Plotly.newPlot('turbidityChart', [turbidityChart]);
+        Plotly.newPlot('temperatureChart', [temperatureChart]);
+
+        // Create line chart for historical water quality data
+        var trace1 = {
+            x: historicalWaterQualities.dates,
+            y: historicalWaterQualities.ph,
+            mode: 'lines',
+            name: 'pH'
+        };
+
+        var trace2 = {
+            x: historicalWaterQualities.dates,
+            y: historicalWaterQualities.turbidity,
+            mode: 'lines',
+            name: 'Turbidity'
+        };
+
+        var trace3 = {
+            x: historicalWaterQualities.dates,
+            y: historicalWaterQualities.temperature,
+            mode: 'lines',
+            name: 'Temperature'
+        };
+
+        var layout = {
+            title: 'Historical Water Quality',
+            xaxis: { title: 'Date' },
+            yaxis: { title: 'Value' }
+        };
+
+        Plotly.newPlot('waterQualityHistoryChart', [trace1, trace2, trace3], layout);
     });
 </script>
 {% endblock %}

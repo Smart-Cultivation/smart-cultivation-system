@@ -1,7 +1,7 @@
 {% extends "components/master_layout.html" %}
 
 {% block content %}
-<div class="container d-flex justify-content-center align-items-center" style="height: 80vh;">
+<div class="container d-flex align-items-center justify-content-center min-vh-100">
     <form method="POST" action="/pond/insert" class="card p-5 d-flex flex-column gap-3">
         <h1 class="text-center">Insert Fish Pond</h1>
         {{ form.hidden_tag() }}
@@ -23,6 +23,14 @@
                 <span style="color: red;">[{{ error }}]</span><br>
             {% endfor %}
         </p>
+        {% if messages %}
+        <div class="alert alert-warning">
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
         {{ form.submit(class="btn btn-dark") }}
     </form>
 </div>
